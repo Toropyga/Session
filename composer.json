@@ -1,0 +1,26 @@
+{
+    "name": "toropyga/session",
+    "description": "Libraries for working with sessions from Toropyga",
+    "authors": [
+        {
+            "name": "Yuri Frantsevich",
+            "email": "frantsevich@gmail.com",
+            "homepage": "https://github.com/Toropyga/Session",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.1.0",
+        "toropyga/db": "^1.0"
+    },
+    "require-dev": {
+
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "FYN\\": "src/"
+        }
+    }
+}
