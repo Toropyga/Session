@@ -3,14 +3,13 @@
  * Класс для работы с сессиями в PHP
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
- * @version 2.0.0
+ * @version 2.0.1
  * @copyright 2005-2021
  */
 
 namespace FYN;
 
-use FYN\DB\MySQL;
-use FYN\DB\PDO_LIB;
+use FYN\Base;
 
 class Session {
 
@@ -294,7 +293,7 @@ class Session {
         $rand = rand(0,99999999);
         $rand = sprintf('%08d', $rand);
         $id .= $rand;
-        $sid = $this->getKeyHash($id, 'md5');
+        $sid = Base::getKeyHash($id, 'md5');
         if ($this->debug) $this->logs[] = 'Generate new Session ID: '.$sid;
         return $sid;
     }
@@ -315,7 +314,7 @@ class Session {
         $res = unserialize($ses['session_data']);
         if (isset($ses['user_id']) && $ses['user_id']) $res['user_id'] = $ses['user_id'];
         else $res['user_id'] = '';
-        $ip = $this->getIP();
+        $ip = Base::getIP();
         if (isset($res['proxy']) && $res['proxy'] != $ip['proxy']) {
             $res['proxy_old'] = $res['proxy'];
             $res['proxy'] = $ip['proxy'];
@@ -351,7 +350,7 @@ class Session {
             $data = array();
             if (isset($_SESSION['user_id'])) $data['user_id'] = $_SESSION['user_id'];
             else $data['user_id'] = '0';
-            $ip = $this->getIP();
+            $ip = Base::getIP();
             $data['user_ip'] = sprintf("%u", ip2long($ip['ip']));
             if (isset($_SESSION['remember']) && $_SESSION['remember']) $data['session_end'] = time() + $this->session_live_time_rem;
             else $data['session_end'] = time() + $this->session_live_time;
@@ -370,72 +369,6 @@ class Session {
             if ($this->debug) $this->logs[] = "Saved Session's Data: ".preg_replace("/\n/", '', print_r($data, true));
         }
         return true;
-    }
-
-    /**
-     * Вычисляем хэш строки
-     * @param $key - строка
-     * @param string $alg - ключ используемой функции, по умолчанию md5
-     * @return bool|string
-     */
-    private function getKeyHash ($key, $alg = '') {
-
-        if (!$alg && defined("CRYPT_TYPE")) $alg = CRYPT_TYPE;
-        elseif (!$alg) $alg = 'md5';
-
-        switch ($alg) {
-            case 'password':
-                $key = password_hash($key, PASSWORD_DEFAULT);
-                break;
-            case 'password_bcrypt':
-                $key = password_hash($key, PASSWORD_BCRYPT);
-                break;
-            case 'crypt':
-                $key = crypt($key);
-                break;
-            case 'crypt_site':
-                if (defined("CRYPT_KEY")) $key = crypt($key, CRYPT_KEY);
-                else $key = crypt($key);
-                break;
-            case 'sha1':
-                $key = sha1($key);
-                break;
-            case 'hash':
-                $key = hash('sha256', $key);
-                break;
-            case 'md5':
-            default:
-                $key = md5($key);
-                break;
-        }
-        return $key;
-    }
-
-    /**
-     * Определение IP адреса с которого открывается страница
-     * @return mixed
-     */
-    public function getIP () {
-        $ipn = $_SERVER['REMOTE_ADDR'];
-        if (!$ipn) $ipn = urldecode(getenv('HTTP_CLIENT_IP'));
-        if (getenv('HTTP_X_FORWARDED_FOR') && strcasecmp(getenv("HTTP_X_FORWARDED_FOR"), "unknown")) $strIP = getenv('HTTP_X_FORWARDED_FOR');
-        elseif (getenv('HTTP_X_FORWARDED') && strcasecmp(getenv("HTTP_X_FORWARDED"), "unknown")) $strIP = getenv('HTTP_X_FORWARDED');
-        elseif (getenv('HTTP_FORWARDED_FOR') && strcasecmp(getenv("HTTP_FORWARDED_FOR"), "unknown")) $strIP = getenv('HTTP_FORWARDED_FOR');
-        elseif (getenv('HTTP_FORWARDED') && strcasecmp(getenv("HTTP_FORWARDED"), "unknown")) $strIP = getenv('HTTP_FORWARDED');
-        else $strIP = $_SERVER['REMOTE_ADDR'];
-        if ($ipn == '::1') $ipn = '127.0.0.1';
-        if ($strIP == '::1') $strIP = '127.0.0.1';
-        if (!preg_match("/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/", $ipn)) $ipn = '';
-        if (!preg_match("/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/", $strIP)) $strIP = $ipn;
-        if ($strIP != $ipn) {
-            $ip['proxy'] = $ipn;
-            $ip['ip'] = $strIP;
-        }
-        else {
-            $ip['proxy'] = '';
-            $ip['ip'] = $ipn;
-        }
-        return $ip;
     }
 
     /**
