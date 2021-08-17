@@ -12,7 +12,8 @@
     "license": "MIT",
     "require": {
         "php": ">=5.1.0",
-        "toropyga/db": "^1.0"
+        "toropyga/db": "^1.0",
+        "toropyga/base": "*"
     },
     "require-dev": {
 

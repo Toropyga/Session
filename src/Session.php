@@ -3,7 +3,7 @@
  * Класс для работы с сессиями в PHP
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
- * @version 2.0.1
+ * @version 2.0.2
  * @copyright 2005-2021
  */
 
