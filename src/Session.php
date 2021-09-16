@@ -3,7 +3,7 @@
  * Класс для работы с сессиями в PHP
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
- * @version 2.0.2
+ * @version 2.0.3
  * @copyright 2005-2021
  */
 
@@ -236,7 +236,8 @@ class Session {
      */
     private function getSession () {
         if ($this->debug) $this->logs[] = "Get Session's Data: Start";
-        $domain = ($_SERVER['SERVER_NAME'] != 'localhost' && preg_match("/\./", $_SERVER['SERVER_NAME']))?$_SERVER['SERVER_NAME']:false;
+        $domain = ($_SERVER['SERVER_NAME'] != 'localhost' && preg_match("/\./", $_SERVER['SERVER_NAME']))?$_SERVER['SERVER_NAME']:"localhost";
+        if (preg_match("/\s/", $domain)) $domain = preg_replace("/\s/", '', $domain);
         if ($this->debug) $this->logs[] = "Session domain: ".$domain;
         session_save_path(SESSION_PATH);
         if ($this->debug) $this->logs[] = "Session path: ".SESSION_PATH;
