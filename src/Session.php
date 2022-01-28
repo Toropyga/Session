@@ -3,7 +3,7 @@
  * Класс для работы с сессиями в PHP
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
- * @version 2.0.3
+ * @version 2.1.0
  * @copyright 2005-2021
  */
 
@@ -148,6 +148,7 @@ class Session {
         if (defined("SE_HTTPONLY")) $this->http_only = SE_HTTPONLY;
         if (defined('SE_SAMESITE')) $this->samesite = SE_SAMESITE;
         if (defined("SE_USE_TMPL")) $this->use_tmpl = SE_USE_TMPL;
+        if (defined("SE_DEBUG")) $this->debug = SE_DEBUG;
         if (!defined("SEPARATOR")) {
             $separator = getenv("COMSPEC")? '\\' : '/';
             define("SEPARATOR", $separator);
@@ -370,6 +371,14 @@ class Session {
             if ($this->debug) $this->logs[] = "Saved Session's Data: ".preg_replace("/\n/", '', print_r($data, true));
         }
         return true;
+    }
+
+    /**
+     * Установка параметра отладки и записи в лог
+     * @param boolean $debug
+     */
+    public function setDebug ($debug = false) {
+        $this->debug = $debug;
     }
 
     /**

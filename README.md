@@ -2,7 +2,7 @@
 Библиотека для работы с сессиями в PHP
 
 ![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-v2.0.3-blue.svg)
+![Version](https://img.shields.io/badge/version-v2.1.0-blue.svg)
 ![PHP](https://img.shields.io/badge/php-v5.5_--_v8-blueviolet.svg)
 
 
@@ -46,6 +46,7 @@ composer require toropyga/session
 * SE_USE_SERVER_NAME - использовать имя сервера при создании директории (true|false)
 * SE_USE_SDIR - использовать стандартную папку для хранения сессий (true|false)
 * SE_LOG_NAME - имя файла в который сохраняется лог
+* SE_DEBUG - включить или выключить отладку и запись в лог
 
 
 ## Подключение
