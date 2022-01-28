@@ -63,6 +63,6 @@ $SE = new FYN\Session();
 
 ```php
 $SE = new FYN\Session();
-$SE->sessionInit();
 $SE->setDebug(true); // включить отладку
+$SE->sessionInit();
 ```
