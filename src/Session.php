@@ -1,9 +1,9 @@
 <?php
 /**
- * Класс для работы с сессиями в PHP
+ * A class for working with sessions in PHP
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
- * @version 2.1.0
+ * @version 2.2.0
  * @copyright 2005-2021
  */
 
@@ -14,122 +14,122 @@ use FYN\Base;
 class Session {
 
     /**
-     * Идентификатор сессии
+     * Session identifier
      * @var mixed
      */
     private $sid;
 
     /**
-     * Имя сессии
+     * Session name
      * @var string
      */
     private $session_name = 'cms';
 
     /**
-     * Время "жизни" простой (гостевой) сессии (сек.)
+     * Lifetime of a regular (guest) session (sec.)
      * @var int
      */
     private $session_live_time = 3600;
 
     /**
-     * Время "жизни" сохранённой сессии (сек.)
+     * Lifetime of a "remembered" session (sec.)
      * @var int
      */
     private $session_live_time_rem = 2592000;
 
     /**
-     * Использовать БД
+     * Whether to use the DB
      *
      * @var bool
      */
     private $usedb = true;
 
     /**
-     * Тип БД
-     * (временно поддерживает только mysql)
+     * DB type
+     * (currently only mysql is supported)
      * @var int
      */
     private $db_type = 'mysql';
 
     /**
-     * Имя таблицы в БД для хранения сессии
+     * Name of the DB table used to store sessions
      * @var string
      */
     private $table_name = 'sessions';
 
     /**
-     * SQL запросы на создание таблицы
+     * SQL queries for creating the table
      * @var array
      */
     private $tables = array();
 
     /**
-     * Подключение к БД
+     * DB connection
      * @var object
      */
     private $DB;
 
     /**
-     * Имя директории для хранения сессии
+     * Name of the directory used to store session files
      * @var string
      */
     private $tmp_dir = 'cookie';
 
     /**
-     * Использовать имя сервера
+     * Whether to use the server name
      * @var bool
      */
     private $use_server_name  = true;
 
     /**
-     * Использовать стандартную папку для хранения сессий
+     * Whether to use the default folder for storing sessions
      * @var bool
      */
     private $use_session_dir = false;
 
     /**
-     * Создать специальную папку для хранения сессионных файлов
+     * Whether to create a dedicated folder for storing session files
      * @var bool
      */
     private $use_tmpl = false;
 
     /**
-     * Признак инициации сессии
+     * Flag indicating whether the session has been initiated
      * @var bool
      */
     private $se_init = false;
 
     /**
-     * Логи
+     * Logs
      * @var array
      */
     private $logs = array();
 
     /**
-     * Отладочные логи
+     * Debug logs
      */
     private $debug = false;
 
     /**
-     * Имя файла в который сохраняется лог
+     * Name of the file the log is saved to
      * @var string
      */
     private $log_file = 'session.log';
 
     /**
-     * Параметр безопасности для COOKIE
+     * Security parameter for the COOKIE
      * @var bool
      */
     private $secure = true;
 
     /**
-     * Параметр безопасности для COOKIE
+     * Security parameter for the COOKIE
      * @var bool
      */
     private $http_only = true;
 
     /**
-     * Порядок кроссдоменной передачи куки
+     * Cross-domain cookie transfer policy
      *
      * @var string
      */
@@ -205,7 +205,7 @@ class Session {
     }
 
     /**
-     * Сохранение данных по завершению работы скрипта
+     * Save data when the script finishes running
      */
     public function __destruct(){
         $this->setSession();
@@ -213,7 +213,7 @@ class Session {
     }
 
     /**
-     * Инициализация сессии
+     * Session initialization
      */
     public function sessionInit () {
         if ($this->debug) $this->logs[] = "Session INIT";
@@ -233,7 +233,7 @@ class Session {
     }
 
     /**
-     * Старт сессии
+     * Start the session
      */
     private function getSession () {
         if ($this->debug) $this->logs[] = "Get Session's Data: Start";
@@ -260,8 +260,9 @@ class Session {
             $options = array('lifetime'=>(time()+$live_time), 'path'=>'/', 'domain'=>$domain, 'secure'=>$this->secure, 'httponly'=>$this->http_only, 'samesite'=>$this->samesite);
             session_set_cookie_params($options);
             session_start();
-            $cookie_param = array('expires'=>(time()+$live_time), 'path'=>'/', 'domain'=>$domain, 'secure'=>$this->secure, 'httponly'=>$this->http_only, 'samesite'=>$this->samesite);
-            setcookie($this->session_name, $this->sid, $cookie_param);
+            $this->setMyCookie($this->session_name, $this->sid, $live_time, $domain);
+            //$cookie_param = array('expires'=>(time()+$live_time), 'path'=>'/', 'domain'=>$domain, 'secure'=>$this->secure, 'httponly'=>$this->http_only, 'samesite'=>$this->samesite);
+            //setcookie($this->session_name, $this->sid, $cookie_param);
             //setcookie($this->session_name, $this->sid, (time()+$live_time), '/', $domain, $this->secure, $this->http_only);
             if ($this->usedb) $_SESSION = $session;
         }
@@ -274,15 +275,15 @@ class Session {
         header("Cache-Control: post-check=0, pre-check=0", false);
         header("Pragma: no-cache");
         /**
-         * Регитрация функции, сохраняющей данные по окончанию работы скрипта
-         * (старый подход)
+         * Registration of the function that saves data when the script finishes running
+         * (old approach)
          */
         //register_shutdown_function(array($this, 'setSession'));
         if ($this->debug) $this->logs[] = "Get Session's Data: Stop";
     }
 
     /**
-     * Генерация идентификатора сессии
+     * Generate the session identifier
      * @return string
      */
     private function getSessionID () {
@@ -295,13 +296,13 @@ class Session {
         $rand = rand(0,99999999);
         $rand = sprintf('%08d', $rand);
         $id .= $rand;
-        $sid = Base::getKeyHash($id, 'md5');
+        $sid = Base::getKeyHash($id, 'hash');
         if ($this->debug) $this->logs[] = 'Generate new Session ID: '.$sid;
         return $sid;
     }
 
     /**
-     * Получение данных сессии из БД
+     * Retrieve session data from the DB
      * @return mixed
      */
     private function getSessionData () {
@@ -311,7 +312,10 @@ class Session {
         $sql = "SELECT * FROM ".TB_SESSION." WHERE sid = '$this->sid'";
         $ses = $this->DB->getResults($sql, 2);
         if ($this->debug) $this->logs[] = "Data from Database: ".preg_replace("/\n/", '', print_r($ses, true));
-        if (isset($ses['session_data']) && $ses['session_data']) $ses['session_data'] = stripslashes($ses['session_data']);
+        if (isset($ses['session_data']) && $ses['session_data']) {
+            $ses['session_data'] = stripcslashes($ses['session_data']);
+            $ses['session_data'] = stripslashes($ses['session_data']);
+        }
         else $ses['session_data'] = '';
         $res = unserialize($ses['session_data']);
         if (isset($ses['user_id']) && $ses['user_id']) $res['user_id'] = $ses['user_id'];
@@ -332,7 +336,7 @@ class Session {
     }
 
     /**
-     * Сохранение данных сессии в БД
+     * Save session data to the DB
      * @return bool
      */
     public function setSession () {
@@ -358,6 +362,7 @@ class Session {
             else $data['session_end'] = time() + $this->session_live_time;
             $data['session_last'] = time();
             $data['session_data'] = addslashes(serialize($_SESSION));
+            $data['session_data'] = addcslashes($data['session_data'], '%_');
             if ($cn) {
                 $index['sid'] = $sid;
                 $sql = $this->DB->getUpdateSQL(TB_SESSION, $data, $index);
@@ -374,7 +379,7 @@ class Session {
     }
 
     /**
-     * Установка параметра отладки и записи в лог
+     * Set the debug flag and logging
      * @param boolean $debug
      */
     public function setDebug ($debug = false) {
@@ -382,13 +387,36 @@ class Session {
     }
 
     /**
-     * Возвращает логи
+     * Returns the logs
      * @return array
      */
     public function getLogs () {
         $return['log'] = $this->logs;
         $return['file'] = $this->log_file;
         return $return;
+    }
+
+    /**
+     * Set a cookie
+     * @param string $name - cookie name
+     * @param string $value - cookie value
+     * @param int $live_time - session lifetime in seconds
+     * @param string $domain - domain the cookie is set for
+     * @param $secure
+     * @param $http_only
+     * @param $samesite
+     */
+    public function setMyCookie ($name = '', $value = '', $live_time = 0, $domain = '', $secure = '', $http_only = '', $samesite = '') {
+        if (!$live_time) $live_time = $this->session_live_time;
+        $live_time = time() + $live_time;
+        if (!$domain) $domain = ($_SERVER['SERVER_NAME'] != 'localhost' && preg_match("/\./", $_SERVER['SERVER_NAME']))?$_SERVER['SERVER_NAME']:"localhost";
+        if (preg_match("/\s/", $domain)) $domain = preg_replace("/\s/", '', $domain);
+        if (!$secure) $secure = $this->secure;
+        if (!$http_only) $http_only = $this->http_only;
+        if (!$samesite) $samesite = $this->samesite;
+        $cookie_param = array('expires'=>$live_time, 'path'=>'/', 'domain'=>$domain, 'secure'=>$secure, 'httponly'=>$http_only, 'samesite'=>$samesite);
+        setcookie($name, $this->sid, $cookie_param);
+        return true;
     }
 
 }
