@@ -361,16 +361,15 @@ class Session {
             if (isset($_SESSION['remember']) && $_SESSION['remember']) $data['session_end'] = time() + $this->session_live_time_rem;
             else $data['session_end'] = time() + $this->session_live_time;
             $data['session_last'] = time();
-            $data['session_data'] = addslashes(serialize($_SESSION));
-            $data['session_data'] = addcslashes($data['session_data'], '%_');
+            $data['session_data'] = serialize($_SESSION);
             if ($cn) {
                 $index['sid'] = $sid;
-                $sql = $this->DB->getUpdateSQL(TB_SESSION, $data, $index);
+                $sql = $this->DB->setUpdate(TB_SESSION, $data, $index);
             }
             else {
                 $data['session_start'] = time();
                 $data['sid'] = $sid;
-                $sql = $this->DB->getInsertSQL(TB_SESSION, $data);
+                $sql = $this->DB->setInsert(TB_SESSION, $data);
             }
             $this->DB->query($sql);
             if ($this->debug) $this->logs[] = "Saved Session's Data: ".preg_replace("/\n/", '', print_r($data, true));
