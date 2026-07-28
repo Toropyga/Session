@@ -4,7 +4,7 @@
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
  * @version 2.2.1
- * @copyright 2005-2021
+ * @copyright 2005-2026
  */
 
 namespace FYN;
