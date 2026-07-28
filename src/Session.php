@@ -3,7 +3,7 @@
  * A class for working with sessions in PHP
  * @author Yuri Frantsevich (FYN)
  * Date: 24/05/2005
- * @version 2.2.2
+ * @version 2.2.3
  * @copyright 2005-2026
  */
 
@@ -157,9 +157,6 @@ class Session {
         if ($this->debug) $this->logs[] = "Session's Class constructed";
         if ($this->usedb) {
             if ($this->debug) $this->logs[] = 'The Session uses Database';
-            if (defined('DefMySQL') && DefMySQL) $this->db_type = 'mysql';
-            elseif (defined('DefPostGre') && DefPostGre) $this->db_type = 'postgre';
-            else $this->usedb = false;
             if (!defined("TB_SESSION")) define("TB_SESSION", $this->table_name);
             $this->tables = array(
                 'mysql'     => "CREATE TABLE `".TB_SESSION."` ( `sid` varchar(100) NOT NULL default '', `user_id` varchar(40) NOT NULL default '', `user_ip` char(20) NOT NULL default '0', `session_start` int(11) NOT NULL default '0', `session_end` int(11) NOT NULL default '0', `session_last` int(11) NOT NULL default '0', `session_data` longtext NOT NULL, PRIMARY KEY  (`sid`)) ENGINE=InnoDB CHARACTER SET `utf8` COLLATE `utf8_general_ci`;",
@@ -228,6 +225,7 @@ class Session {
                     $this->usedb = false;
                 }
             }
+            else $this->logs[] = 'Session table is available!';
         }
         $this->se_init = true;
         $this->getSession();
@@ -318,7 +316,7 @@ class Session {
             $ses['session_data'] = stripslashes($ses['session_data']);
         }
         else $ses['session_data'] = '';
-        $res = unserialize($ses['session_data']);
+        if (!$res = unserialize($ses['session_data'])) $res = array();
         if (isset($ses['user_id']) && $ses['user_id']) $res['user_id'] = $ses['user_id'];
         else $res['user_id'] = '';
         $ip = Base::getIP();
