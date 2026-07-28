@@ -10,6 +10,7 @@
 namespace FYN;
 
 use FYN\Base;
+use FYN\DB;
 
 class Session {
 
@@ -218,8 +219,8 @@ class Session {
     public function sessionInit () {
         if ($this->debug) $this->logs[] = "Session INIT";
         if ($this->usedb && $this->db_type) {
-            if ($this->db_type == 'mysql') $this->DB = new FYN\DB\MySQL();
-            elseif ($this->db_type == 'postgre') $this->DB = new FYN\DB\PDO_LIB('pgsql'); // PostGre
+            if ($this->db_type == 'mysql') $this->DB = new DB\MySQL();
+            elseif ($this->db_type == 'postgre') $this->DB = new DB\PDO_LIB('pgsql'); // PostGre
             $tables = $this->DB->getTableList();
             if (!in_array(TB_SESSION, $tables)) {
                 if (!$this->DB->query($this->tables[$this->db_type])) {
