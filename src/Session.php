@@ -3,7 +3,7 @@
  * A class for working with sessions in PHP
  * @author Yuri Frantsevich
  * Date: 24/05/2005
- * @version 3.0.1
+ * @version 3.0.2
  * @copyright 2005-2026
  */
 
