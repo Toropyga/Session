@@ -2,7 +2,7 @@
 Библиотека для работы с сессиями в PHP
 
 ![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-v2.2.3-blue.svg)
+![Version](https://img.shields.io/badge/version-v3.0.0-blue.svg)
 ![PHP](https://img.shields.io/badge/php-v5.5_--_v8-blueviolet.svg)
 
 
@@ -55,14 +55,14 @@ require_once("vendor/autoload.php");
 ```
 Инициализация класса
 ```php
-$SE = new FYN\Session();
+$SE = new Toropyga\Session();
 ```
 
 
 ## Пример использования
 
 ```php
-$SE = new FYN\Session();
+$SE = new Toropyga\Session();
 $SE->setDebug(true); // включить отладку
 $SE->sessionInit();
 ```

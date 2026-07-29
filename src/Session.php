@@ -1,16 +1,16 @@
 <?php
 /**
  * A class for working with sessions in PHP
- * @author Yuri Frantsevich (FYN)
+ * @author Yuri Frantsevich
  * Date: 24/05/2005
- * @version 2.2.3
+ * @version 3.0.0
  * @copyright 2005-2026
  */
 
-namespace FYN;
+namespace Toropyga;
 
-use FYN\Base;
-use FYN\DB;
+use Toropyga\Base;
+use Toropyga\DB;
 
 class Session {
 
