@@ -2,8 +2,8 @@
 A library for working with sessions in PHP
 
 ![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-v3.1.0-blue.svg)
-![PHP](https://img.shields.io/badge/php-v7_--_v8-blueviolet.svg)
+![Version](https://img.shields.io/badge/version-v3.1.1-blue.svg)
+![PHP](https://img.shields.io/badge/php-v7.4_--_v8-blueviolet.svg)
 
 
 ## Table of Contents
@@ -19,7 +19,7 @@ A library for working with sessions in PHP
 ## Overview
 
 The Session class is a library for working with sessions in PHP.
-It requires PHP version 7.0 or higher (session IDs are generated with `random_bytes()`, and the library uses typed properties and `declare(strict_types=1)`).
+It requires PHP 7.4 or newer (session IDs are generated with `random_bytes()`, and the library uses typed properties and `declare(strict_types=1)`).
 It can store user session data in a database.
 It works with MySQL and PostgreSQL databases.
 It automatically creates a table in the database, if one does not already exist, to store session data.
@@ -31,6 +31,9 @@ The recommended way to install the Session library is using [Composer](http://ge
 ```bash
 composer require toropyga/session
 ```
+
+> Minimum PHP version: 7.4+
+
 
 ## Configuration
 Default parameters can be pre-configured either directly in the class itself, or by using named constants.

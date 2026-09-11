@@ -5,7 +5,7 @@ declare(strict_types=1);
  * A class for working with sessions in PHP
  * @author Yuri Frantsevich
  * Date: 24/05/2005
- * @version 3.1.0
+ * @version 3.1.1
  * @copyright 2005-2026
  *
  * Changelog 3.1.0:
@@ -531,11 +531,11 @@ class Session {
 
             if ($cn) {
                 $index = ['sid' => $sid];
-                $sql = $this->DB->setUpdate(TB_SESSION, $data, $index);
+                $sql = $this->DB->getUpdateSQL(TB_SESSION, $data, $index);
             } else {
                 $data['session_start'] = time();
                 $data['sid'] = $sid;
-                $sql = $this->DB->setInsert(TB_SESSION, $data);
+                $sql = $this->DB->getInsertSQL(TB_SESSION, $data);
             }
             $this->DB->query($sql);
 

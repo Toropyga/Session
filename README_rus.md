@@ -2,8 +2,8 @@
 Библиотека для работы с сессиями в PHP
 
 ![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-v3.1.0-blue.svg)
-![PHP](https://img.shields.io/badge/php-v7_--_v8-blueviolet.svg)
+![Version](https://img.shields.io/badge/version-v3.1.1-blue.svg)
+![PHP](https://img.shields.io/badge/php-v7.4_--_v8-blueviolet.svg)
 
 
 ## Содержание
@@ -19,18 +19,21 @@
 ## Общие понятия
 
 Класс Session - это библиотека для работы с сессиями в PHP.
-Для работы необходимо наличие PHP версии 7.0 и выше (идентификаторы сессии генерируются с помощью `random_bytes()`, а также используются типизированные свойства и `declare(strict_types=1)`).
+Для работы необходимо наличие PHP версии 7.4 и выше (идентификаторы сессии генерируются с помощью `random_bytes()`, а также используются типизированные свойства и `declare(strict_types=1)`).
 Может сохранять данные сессии пользователя в базе данных.
 Работает с БД MySQL и Postgre.
 Автоматически создаёт таблицу в БД, если она не существует, для хранения данных сессии.
 
 
 ## Установка
-Рекомендуемый способ установки библиотеки NetContent с использованием [Composer](http://getcomposer.org/):
+Рекомендуемый способ установки библиотеки с использованием [Composer](http://getcomposer.org/):
 
 ```bash
 composer require toropyga/session
 ```
+
+> Минимальная версия PHP: 7.4+
+
 
 ## Настройка
 Предварительная настройка параметров по умолчанию может осуществлятся или непосредственно в самом классе, или с помощью именованных констант.
