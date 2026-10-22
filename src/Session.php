@@ -5,7 +5,7 @@ declare(strict_types=1);
  * A class for working with sessions in PHP
  * @author Yuri Frantsevich
  * Date: 24/05/2005
- * @version 3.1.1
+ * @version 3.1.2
  * @copyright 2005-2026
  *
  * Changelog 3.1.0:
@@ -162,6 +162,12 @@ class Session {
      * @var bool
      */
     private bool $send_no_cache_headers = true;
+
+    /**
+     * CSRF token for the session
+     * @var string
+     */
+    private string $csrf_token = '';
 
     /**
      * Regex that a valid session ID must match: hex string, 32-128 chars.
@@ -321,6 +327,24 @@ class Session {
     }
 
     /**
+     * Generate a CSRF token (CSPRNG) if one hasn't been generated yet.
+     */
+    private function initCsrfToken(): void {
+        if (empty($this->csrf_token)) {
+            $this->csrf_token = bin2hex(random_bytes(32));
+        }
+    }
+
+    /**
+     * Returns the CSRF token for the current session, so it can be
+     * embedded in forms/AJAX requests and compared against on submission.
+     * @return string
+     */
+    public function getCsrfToken(): string {
+        return $this->csrf_token;
+    }
+
+    /**
      * Start the session
      */
     private function getSession(): void {
@@ -371,9 +395,22 @@ class Session {
             // separate Set-Cookie headers for the same cookie name).
 
             if ($this->usedb) $_SESSION = $session;
-        } 
+        }
         else {
             $this->sid = (string) session_id();
+        }
+
+        // Restore the CSRF token already stored in the session, or generate
+        // a new one for a fresh session. Without this sync, $this->csrf_token
+        // would stay empty (and getCsrfToken() would return '') on every
+        // request after the first, even though the token is present in
+        // $_SESSION.
+        if (empty($_SESSION['csrf_token'])) {
+            $this->initCsrfToken();
+            $_SESSION['csrf_token'] = $this->csrf_token;
+        }
+        else {
+            $this->csrf_token = (string) $_SESSION['csrf_token'];
         }
 
         if ($this->debug) $this->logs[] = 'Session ID: ' . $this->sid;

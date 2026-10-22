@@ -4,16 +4,17 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [3.1.2] - 2026-10-22
+
 ### Added
-- Added a project changelog file to document releases and notable changes.
+- Added CSRF token support: a per-session token is generated automatically (via `random_bytes()`), stored in `$_SESSION['csrf_token']`, and persisted across requests. Retrieve it with the new `getCsrfToken(): string` method to embed in forms/AJAX requests for CSRF protection.
 
-### Reviewed
-- Verified the main implementation in [src/Session.php](src/Session.php) and confirmed it parses successfully.
-- Checked the project metadata in [composer.json](composer.json) and the docs in [README.md](README.md).
+### Fixed
+- Fixed the new CSRF token not being restored from an existing session: `getCsrfToken()` was returning an empty string on every request after the first one, because the token stored in `$_SESSION['csrf_token']` was never synced back to the in-memory property. The token is now loaded from `$_SESSION` when present, and only generated when missing.
 
-### Notes
-- The project is now aligned to version 3.1.1 across the class header and documentation.
-- The implementation requires PHP 7.4+ and the dependency constraints were aligned to reflect that support.
+### Verification
+- `php -l src/Session.php` returned: `No syntax errors detected in src/Session.php`.
+- Verified CSRF token and session data persistence across two simulated requests sharing the same session ID.
 
 ## [3.1.1] - 2026-09-11
 

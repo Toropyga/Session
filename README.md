@@ -2,7 +2,7 @@
 A library for working with sessions in PHP
 
 ![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-v3.1.1-blue.svg)
+![Version](https://img.shields.io/badge/version-v3.1.2-blue.svg)
 ![PHP](https://img.shields.io/badge/php-v7.4_--_v8-blueviolet.svg)
 
 
@@ -62,6 +62,9 @@ Named constants, if needed, should be defined before the class is called — for
 
 ### `sessionInit(): void`
 Initializes the session: connects to the database (if `SE_USEDB` is enabled) and creates the sessions table if it doesn't exist yet, then starts the PHP session and, when a database is used, loads the stored session data into `$_SESSION`. This is normally the first method you call after instantiating the class.
+
+### `getCsrfToken(): string`
+Returns the CSRF token for the current session. A token is generated automatically (via `random_bytes()`) the first time a session is created, stored in `$_SESSION['csrf_token']`, and restored from there on subsequent requests, so the value stays the same for the lifetime of the session. Use it to embed a hidden field or header in forms/AJAX requests and compare it against the submitted value to protect against Cross-Site Request Forgery.
 
 ### `setSession(): bool`
 Persists the current `$_SESSION` data to the database (insert or update, depending on whether a row for the current session ID already exists). Called automatically from the destructor, so you rarely need to call it manually — but it's available if you want to force an immediate save (e.g. right after changing `$_SESSION['user_id']` on login, before doing a redirect). Returns `false` if the session hasn't been initialized yet or the session ID is missing/invalid.
